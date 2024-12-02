@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using AntDesign
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -8,6 +10,7 @@
     <link rel="stylesheet" href="@Assets["lib/bootstrap/dist/css/bootstrap.min.css"]" />
     <link rel="stylesheet" href="@Assets["app.css"]" />
     <link rel="stylesheet" href="@Assets["IoTGame.Practice.styles.css"]" />
+    <link href="_content/AntDesign/css/ant-design-blazor.css" rel="stylesheet" />
     <ImportMap />
     <link rel="icon" type="image/png" href="favicon.png" />
     <HeadOutlet />
@@ -15,7 +18,9 @@
 
 <body>
     <Routes />
+    <AntContainer />
     <script src="_framework/blazor.web.js"></script>
+    <script src="_content/AntDesign/js/ant-design-blazor.js"></script>
 </body>
 
 </html>

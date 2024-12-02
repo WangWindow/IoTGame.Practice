@@ -1,5 +1,6 @@
 ﻿@page "/counter"
 @rendermode InteractiveServer
+@using AntDesign
 
 <PageTitle>Counter</PageTitle>
 
@@ -7,7 +8,8 @@
 
 <p role="status">Current count: @currentCount</p>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+@* <button class="btn btn-primary" @onclick="IncrementCount">Click me</button> *@
+<Button Type="@ButtonType.Primary" @onclick="IncrementCount">Hello World!</Button>
 
 @code {
     private int currentCount = 0;
