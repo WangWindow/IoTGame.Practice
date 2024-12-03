@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="AntDesign" Version="1.0.1" />
+    <PackageReference Include="AntDesign.Charts" Version="0.5.6" />
   </ItemGroup>
 
 </Project>

@@ -1,23 +1,62 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
+<Layout>
+    <Sider @bind-Collapsed=@isCollapsed NoTrigger>
+        <NavMenu IsCollapsed="isCollapsed" />
+    </Sider>
+    <Layout>
+        <Header Class="site-layout-background" Style="padding: 0;">
+            @if (isCollapsed)
+            {
+                <Icon Type="menu-unfold" Theme="outline" Class="trigger" OnClick="toggle" />
+            }
+            else
+            {
+                <Icon Type="menu-fold" Theme="outline" Class="trigger" OnClick="toggle" />
+            }
+        </Header>
+        <Header class="top-row px-4">
+            <a href="https://github.com/WangWindow/IoTGame.Practice.git" target="_blank">About</a>
+        </Header>
+        <Content class="content px-4">
             @Body
-        </article>
-    </main>
-</div>
+        </Content>
+    </Layout>
+</Layout>
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+
+<style>
+    .top-row {
+        background: #fff;
+        padding: 0 16px;
+        box-shadow: 0 2px 8px #f0f1f2;
+    }
+
+    .content {
+        margin: 24px 16px;
+        padding: 24px;
+        background: #fff;
+        min-height: 280px;
+    }
+</style>
+
+@code
+{
+    bool isCollapsed = false;
+
+    void toggle()
+    {
+        isCollapsed = !isCollapsed;
+    }
+
+    void OnCollapse(bool isCollapsed)
+    {
+        Console.WriteLine($"Collapsed: {isCollapsed}");
+    }
+
+}

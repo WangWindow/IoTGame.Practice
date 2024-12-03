@@ -1,4 +1,4 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">IoTGame.Practice</a>
     </div>
@@ -10,21 +10,59 @@
     <nav class="nav flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+                <span class="nav-icon-text">
+                    <Icon Type="home" Theme="outline" class="nav-icon" />
+                    <span class="nav-text">Home</span>
+                </span>
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
+            <NavLink class="nav-link" href="history">
+                <span class="nav-icon-text">
+                    <Icon Type="history" Theme="outline" class="nav-icon" />
+                    <span class="nav-text">History</span>
+                </span>
             </NavLink>
         </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
+        <div class="nav-item px-3 settings-item">
+            <NavLink class="nav-link" href="settings">
+                <span class="nav-icon-text">
+                    <Icon Type="setting" Theme="outline" class="nav-icon" />
+                    <span class="nav-text">Settings</span>
+                </span>
             </NavLink>
         </div>
     </nav>
 </div>
 
+<style>
+    .nav-scrollable {
+        position: relative;
+        height: 100%;
+    }
+
+    .settings-item {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+    }
+
+    .nav-icon-text {
+        display: flex;
+        align-items: center;
+    }
+
+    .nav-icon {
+        font-size: 1.5rem;
+        /* 调整图标大小 */
+        margin-right: 0.5rem;
+        /* 图标和文字之间的间距 */
+    }
+
+    .nav-text {
+        font-size: 1rem;
+        /* 调整文字大小 */
+    }
+</style>
