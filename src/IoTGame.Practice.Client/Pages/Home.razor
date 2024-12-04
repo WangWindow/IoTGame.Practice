@@ -1,7 +1,8 @@
 ﻿@page "/"
 
 <PageContainer Title="Welcome">
-    <Card>
+    <!-- #region -->
+    @* <Card>
         <Alert
             Message="AntDesign.Templates have been published to nuget, you can download and use them directly."
             Type="success"
@@ -30,5 +31,27 @@
             </a>
         </Text>
         <pre class="pre"><code><Text Copyable> dotnet new antdesign --host=wasm --full</Text></code></pre>
+    </Card> *@
+    <!-- #endregion -->
+
+    <Card>
+        <Text Strong Style="margin-bottom: 12px; font-size: 20px; font-family: Arial, sans-serif; animation: fadeIn 2s; text-align: center;">
+            <a target="_blank" rel="noopener noreferrer" href="/">
+                基于扩散模型的分布式交通流量预测系统
+            </a>
+        </Text>
+    </Card>
+
+    <Card>
+        <GridRow Justify="center">
+            <GridCol Span="24">
+                <Image
+                    Width="100%"
+                    Height="auto"
+                    Src="images/example.png"
+                    Alt="example"
+                    Style="margin-bottom: 12px; animation: fadeIn 2s;"/>
+            </GridCol>
+        </GridRow>
     </Card>
 </PageContainer>
