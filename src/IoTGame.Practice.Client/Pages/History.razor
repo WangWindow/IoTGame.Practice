@@ -1,0 +1,102 @@
+﻿@page "/history"
+@using AntDesign.TableModels;
+@using System.Text.Json;
+@using System.IO;
+@using System.Text;
+
+<PageContainer Title="History">
+
+    <Table DataSource="data" OnChange="OnChange" TItem="Data">
+        <TitleTemplate>
+            <GridRow>
+                <GridCol Span="4">
+                    <Title Level="3">Flow History</Title>
+                </GridCol>
+                <GridCol Span="8" Offset="12">
+                    <Search Placeholder="Search Name" @bind-Value="searchString" OnSearch="()=>_table?.ReloadData()" />
+                </GridCol>
+            </GridRow>
+        </TitleTemplate>
+
+        <ColumnDefinitions>
+            <PropertyColumn TItem="Data" TProp="int" Property="c=>c.Id"
+                            SorterCompare="@((int a, int b)=> a - b)"
+                            SortDirections="new[] { SortDirection.Descending }"
+                            />
+            <PropertyColumn TItem="Data" TProp="DateTime" Property="c=>c.Time"
+                            SorterCompare="@((DateTime a, DateTime b) => DateTime.Compare(a, b))"
+                            SortDirections="new[] { SortDirection.Descending }"
+                            />
+            <PropertyColumn TItem="Data" TProp="float" Property="c=>c.Flow"
+                            />
+        </ColumnDefinitions>
+    </Table>
+</PageContainer>
+
+@code {
+    string searchString;
+    IEnumerable<Data> dataSource;
+    ITable _table;
+
+
+    public class Data
+    {
+        public Data(int id, string time, float flow)
+        {
+            Id = id;
+            Time = DateTime.Parse(time);
+            Flow = flow;
+        }
+
+        public int Id { get; set; }
+        public DateTime Time { get; set; }
+        public float Flow { get; set; }
+    }
+
+    Data[] data =
+    {
+        new Data(1, "2024-12-01 02:00:00", 1.1f),
+        new Data(2, "2024-12-01 03:00:00", 2.2f),
+        new Data(3, "2024-12-01 04:00:00", 3.3f),
+        new Data(4, "2024-12-01 05:00:00", 4.4f),
+        new Data(5, "2024-12-01 06:00:00", 5.5f),
+        new Data(6, "2024-12-01 07:00:00", 6.6f),
+        new Data(7, "2024-12-01 08:00:00", 7.7f),
+        new Data(8, "2024-12-01 09:00:00", 8.8f),
+        new Data(9, "2024-12-01 10:00:00", 9.9f),
+        new Data(10, "2024-12-01 11:00:00", 10.1f),
+        new Data(11, "2024-12-01 12:00:00", 11.2f),
+        new Data(12, "2024-12-01 13:00:00", 12.3f),
+        new Data(13, "2024-12-01 14:00:00", 13.4f),
+        new Data(14, "2024-12-01 15:00:00", 14.5f),
+        new Data(15, "2024-12-01 16:00:00", 15.6f),
+        new Data(16, "2024-12-01 17:00:00", 16.7f),
+        new Data(17, "2024-12-01 18:00:00", 17.8f),
+        new Data(18, "2024-12-01 19:00:00", 18.9f),
+        new Data(19, "2024-12-01 20:00:00", 19.1f),
+        new Data(20, "2024-12-01 21:00:00", 20.2f),
+    };
+
+    public TableFilter<string>[] idFilters = new TableFilter<string>[] {
+        new() { Text = "1", Value = "2" },
+        new() { Text = "2", Value = "2" },
+    };
+
+    public TableFilter<string>[] timeFilters = new TableFilter<string>[] {
+        new() { Text = "2024-12-01 04:00:00", Value = "2024-12-01 04:00:00" },
+        new() { Text = "2024-12-01 16:00:00", Value = "2024-12-01 16:00:00" },
+    };
+
+    void OnChange(QueryModel<Data> query)
+    {
+        Console.WriteLine(JsonSerializer.Serialize(query));
+
+        dataSource = query.ExecuteQuery(data.AsQueryable())
+            .Where(x => string.IsNullOrWhiteSpace(searchString) || x.Id.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase));
+    }
+
+    void OnRowClick(RowData<Data> row)
+    {
+        Console.WriteLine($"row {row.Data.Id} was clicked");
+    }
+}
