@@ -1,9 +1,39 @@
-﻿@page "/service"
+@page "/service"
 
 <PageContainer Title="Service">
+
+    <Card Title="系统服务" Style="margin: 16px;">
+        <Descriptions Title="服务状态" Column="1">
+            <DescriptionsItem Title="系统版本">1.0.0</DescriptionsItem>
+            <DescriptionsItem Title="运行状态">正常</DescriptionsItem>
+        </Descriptions>
+
+        <Divider />
+
+        <Space>
+            <Button Type="primary" OnClick="@HandleImmediateWarning">立即预警</Button>
+            <Button OnClick="@HandleSystemUpdate">系统更新</Button>
+            <Button OnClick="@HandleOtherFunction">其他功能</Button>
+        </Space>
+    </Card>
 
 </PageContainer>
 
 @code {
+
+    private void HandleImmediateWarning()
+    {
+        // 实现立即预警的逻辑
+    }
+
+    private void HandleSystemUpdate()
+    {
+        // 实现系统更新的逻辑
+    }
+
+    private void HandleOtherFunction()
+    {
+        // 实现其他功能的逻辑
+    }
 
 }
