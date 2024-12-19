@@ -1,11 +1,12 @@
+using AntDesign.ProLayout;
 using IoTGame.Practice.Client.Pages;
 using IoTGame.Practice.Components;
-using AntDesign.ProLayout;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorComponents()
+builder
+    .Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
@@ -20,11 +21,13 @@ builder.Services.AddScoped(sp =>
     {
         return new HttpClient
         {
-            BaseAddress = new Uri(httpContext.Request.Scheme + "://" + httpContext.Request.Host)
+            BaseAddress = new Uri(httpContext.Request.Scheme + "://" + httpContext.Request.Host),
         };
     }
     return new HttpClient();
 });
+
+builder.Services.AddScoped<IoTGame.Practice.Client.Services.DatabaseService>();
 
 IoTGame.Practice.Program.AddClientServices(builder.Services);
 

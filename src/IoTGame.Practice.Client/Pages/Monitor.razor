@@ -1,39 +1,21 @@
 ﻿@page "/monitor"
+@inject IoTGame.Practice.Client.Services.DatabaseService DatabaseService
 
 <PageContainer Title="Monitor">
 
     <Switch @bind-Checked="isSingleColumn" UnCheckedChildren="双列" CheckedChildren="单列" />
 
-    <GridRow Justify="space-between">
-        <GridCol Class="gutter-row" Span="@(isSingleColumn ? 24 : 12)">
-            <Card Style="margin: 4px; margin-bottom: 4px">
-                <Line Data="data" Config="config" />
-            </Card>
-
-        </GridCol>
-
-        @if (!isSingleColumn)
-        {
-            <GridCol Class="gutter-row" Span="12">
-                <Card Style="margin: 4px; margin-bottom: 4px">
-                    <Line Data="data" Config="config" />
-                </Card>
-            </GridCol>
-        }
-    </GridRow>
+    <InputText @bind-Value="databaseName" Placeholder="Enter Database Name" />
+    <InputText @bind-Value="newRoadId" Placeholder="Enter Road ID" />
+    <Button OnClick="AddRoad">Add Road</Button>
 
     <GridRow Justify="space-between">
-        <GridCol Class="gutter-row" Span="@(isSingleColumn ? 24 : 12)">
-            <Card Style="margin: 4px; margin-bottom: 4px">
-                <Line Data="data" Config="config" />
-            </Card>
-        </GridCol>
-
-        @if (!isSingleColumn)
+        @foreach (var roadData in data)
         {
-            <GridCol Class="gutter-row" Span="12">
+            <GridCol Class="gutter-row" Span="@(isSingleColumn ? 24 : 12)">
                 <Card Style="margin: 4px; margin-bottom: 4px">
-                    <Line Data="data" Config="config" />
+                    <Line Data="roadData" Config="config" />
+                    <Button OnClick="() => RemoveRoad(roadData)">Remove</Button>
                 </Card>
             </GridCol>
         }
@@ -44,35 +26,52 @@
 @code
 {
     private bool isSingleColumn = false;
-    object[] data = new object[]
-    {
-        new { time = "2024-12-01 02:00:00", value = 3, type = "type1"},
-        new { time = "2024-12-01 03:00:00", value = 4, type = "type1"},
-        new { time = "2024-12-01 04:00:00", value = 3.5, type = "type1"},
-        new { time = "2024-12-01 05:00:00", value = 5, type = "type1"},
-        new { time = "2024-12-01 06:00:00", value = 4.9, type = "type1"},
-        new { time = "2024-12-01 07:00:00", value = 6, type = "type1"},
-        new { time = "2024-12-01 08:00:00", value = 7, type = "type1"},
-        new { time = "2024-12-01 09:00:00", value = 9, type = "type1"},
-        new { time = "2024-12-01 10:00:00", value = 13, type = "type1"},
+    private List<List<object>> data = new List<List<object>>();
+    private List<string> roadIds = new List<string>();
+    private string databaseName = "example_data.db";
+    private string newRoadId = "1";
 
-        new { time = "2024-12-01 02:00:00", value = 1.1, type = "type2"},
-        new { time = "2024-12-01 03:00:00", value = 2.4, type = "type2"},
-        new { time = "2024-12-01 04:00:00", value = 5, type = "type2" },
-        new { time = "2024-12-01 05:00:00", value = 3.5, type = "type2" },
-        new { time = "2024-12-01 06:00:00", value = 4.9, type = "type2" },
-        new { time = "2024-12-01 07:00:00", value = 6, type = "type2" },
-        new { time = "2024-12-01 08:00:00", value = 2, type = "type2" },
-        new { time = "2024-12-01 09:00:00", value = 3, type = "type2" },
-        new { time = "2024-12-01 10:00:00", value = 1, type = "type2" },
-    };
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        data.Clear();
+        foreach (var roadId in roadIds)
+        {
+            var roadData = await DatabaseService.QueryDataAsync(databaseName, roadId);
+            data.Add(roadData);
+        }
+    }
+
+    private async Task AddRoad()
+    {
+        if (!string.IsNullOrEmpty(newRoadId) && !roadIds.Contains(newRoadId))
+        {
+            roadIds.Add(newRoadId);
+            var roadData = await DatabaseService.QueryDataAsync(databaseName, newRoadId);
+            data.Add(roadData);
+        }
+    }
+
+    private void RemoveRoad(List<object> roadData)
+    {
+        int index = data.IndexOf(roadData);
+        if (index >= 0)
+        {
+            data.RemoveAt(index);
+            roadIds.RemoveAt(index);
+        }
+    }
 
     LineConfig config = new LineConfig()
     {
         Padding = "auto",
         AutoFit = true,
-        XField = "time",
-        YField = "value",
+        XField = "Date",
+        YField = "Value",
         Smooth = false,
         YAxis = new ValueAxis
         {
