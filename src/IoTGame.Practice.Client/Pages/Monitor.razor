@@ -1,7 +1,4 @@
 ﻿@page "/monitor"
-@using Line=AntDesign.Charts.Line
-@using LineConfig=AntDesign.Charts.LineConfig
-@using Title=AntDesign.Charts.Title
 
 <PageContainer Title="Monitor">
 
@@ -12,6 +9,7 @@
             <Card Style="margin: 4px; margin-bottom: 4px">
                 <Line Data="data" Config="config" />
             </Card>
+
         </GridCol>
 
         @if (!isSingleColumn)

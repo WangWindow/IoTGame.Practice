@@ -1,10 +1,70 @@
-﻿@page "/settings"
+@page "/settings"
 
-<PageContainer Title="Settings">
+<PageContainer Title="设置">
+
+    <Card Title="预警设置" Style="margin: 16px;">
+
+        <Form Model="warningSettings" Layout="vertical">
+            <FormItem Label="预警模式">
+                <Select TItem="string"
+                        TItemValue="string"
+                        @bind-Value="warningSettings.Mode"
+                        Style="width: 200px;">
+                    <SelectOptions>
+                        <SelectOption Value="@("Manual")" Label="手动模式" />
+                        <SelectOption Value="@("Automatic")" Label="自动模式"/>
+                    </SelectOptions>
+                </Select>
+            </FormItem>
+
+            <FormItem Label="阈值设置">
+                <Icon Style="display: inline-block; vertical-align: middle;" Type="Frown" Theme="outline" />
+                <Slider TValue="double" @bind-Value="warningSettings.Threshold" Min="0" Max="100" Style="display: inline-block; width: 300px; margin: 0 10px;"
+                        Disabled="IsAutomaticMode" />
+                <Icon Style="display: inline-block; vertical-align: middle;" Type="Smile" Theme="outline" />
+                <AntDesign.InputNumber @bind-Value="warningSettings.Threshold" Min="0" Max="100" Placeholder="请输入阈值"
+                                       Disabled="IsAutomaticMode"/>
+            </FormItem>
+
+            <FormItem>
+                <Button Type="primary" OnClick="SaveSettings">保存设置</Button>
+            </FormItem>
+        </Form>
+    </Card>
 
 </PageContainer>
 
 @code
 {
+    private WarningSettings warningSettings = new WarningSettings
+    {
+        Mode = "Manual",
+        Threshold = 50
+    };
 
+    private List<string> notificationMethods = new List<string> { "Email", "Push" };
+    private int refreshInterval = 5;
+
+    private bool IsAutomaticMode => warningSettings.Mode == "Automatic";
+
+    private void SaveSettings()
+    {
+        // 保存预警设置的逻辑
+    }
+
+    private void SaveOtherSettings()
+    {
+        // 保存其他设置的逻辑
+    }
+
+    private class WarningSettings
+    {
+        public string Mode { get; set; }
+        public double Threshold { get; set; }
+    }
+
+    private class OtherSettings
+    {
+        // 定义其他设置的属性
+    }
 }
