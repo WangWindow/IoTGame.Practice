@@ -1,102 +1,102 @@
 ﻿@page "/history"
 @using AntDesign.TableModels;
-@using System.Text.Json;
-@using System.IO;
-@using System.Text;
+@using System.Linq;
+@using IoTGame.Practice.Client.Models;
 
 <PageContainer Title="History">
 
-    <Table DataSource="data" OnChange="OnChange" TItem="Data">
+    <Table @ref="_table" DataSource="pagedData" TItem="TrafficData.TrafficRecord" OnChange="OnChange">
         <TitleTemplate>
             <GridRow>
                 <GridCol Span="4">
                     <Title Level="3">Flow History</Title>
                 </GridCol>
                 <GridCol Span="8" Offset="12">
-                    <Search Placeholder="Search Name" @bind-Value="searchString" OnSearch="()=>_table?.ReloadData()" />
+                    <Search Placeholder="Search" @bind-Value="searchString" OnSearch="SearchData" />
                 </GridCol>
             </GridRow>
         </TitleTemplate>
 
         <ColumnDefinitions>
-            <PropertyColumn TItem="Data" TProp="int" Property="c=>c.Id"
-                            SorterCompare="@((int a, int b)=> a - b)"
-                            SortDirections="new[] { SortDirection.Descending }"
-                            />
-            <PropertyColumn TItem="Data" TProp="DateTime" Property="c=>c.Time"
-                            SorterCompare="@((DateTime a, DateTime b) => DateTime.Compare(a, b))"
-                            SortDirections="new[] { SortDirection.Descending }"
-                            />
-            <PropertyColumn TItem="Data" TProp="float" Property="c=>c.Flow"
-                            />
+            <PropertyColumn TItem="TrafficData.TrafficRecord" TProp="int" Property="c => c.Road"
+                            Title="Road"
+                            SorterCompare="@((int a, int b) => a.CompareTo(b))"
+                            SortDirections="new[] { SortDirection.Ascending, SortDirection.Descending }" />
+            <PropertyColumn TItem="TrafficData.TrafficRecord" TProp="DateTime" Property="c => c.Date"
+                            Title="DateTime"
+                            SorterCompare="@((DateTime a, DateTime b) => a.CompareTo(b))"
+                            SortDirections="new[] { SortDirection.Ascending, SortDirection.Descending }" />
+            <PropertyColumn TItem="TrafficData.TrafficRecord" TProp="double" Property="c => c.Flow"
+                            Title="Flow" />
         </ColumnDefinitions>
     </Table>
 </PageContainer>
 
 @code {
-    string searchString;
-    IEnumerable<Data> dataSource;
-    ITable _table;
+    private string searchString;
+    private string dataPath = "data/traffic.db";
+    private List<TrafficData.TrafficRecord> allData = new();
+    private List<TrafficData.TrafficRecord> pagedData = new();
+    private Table<TrafficData.TrafficRecord> _table;
+    private TrafficData trafficData;
 
-
-    public class Data
+    protected override void OnInitialized()
     {
-        public Data(int id, string time, float flow)
+        try
         {
-            Id = id;
-            Time = DateTime.Parse(time);
-            Flow = flow;
+            trafficData = new TrafficData(dataPath);
+            allData = trafficData.GetTrafficData("history");
+            pagedData = new List<TrafficData.TrafficRecord>(allData);
+            Console.WriteLine($"Loaded {allData.Count} records.");
         }
-
-        public int Id { get; set; }
-        public DateTime Time { get; set; }
-        public float Flow { get; set; }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading data: {ex.Message}");
+        }
     }
 
-    Data[] data =
+    private void SearchData()
     {
-        new Data(1, "2024-12-01 02:00:00", 1.1f),
-        new Data(2, "2024-12-01 03:00:00", 2.2f),
-        new Data(3, "2024-12-01 04:00:00", 3.3f),
-        new Data(4, "2024-12-01 05:00:00", 4.4f),
-        new Data(5, "2024-12-01 06:00:00", 5.5f),
-        new Data(6, "2024-12-01 07:00:00", 6.6f),
-        new Data(7, "2024-12-01 08:00:00", 7.7f),
-        new Data(8, "2024-12-01 09:00:00", 8.8f),
-        new Data(9, "2024-12-01 10:00:00", 9.9f),
-        new Data(10, "2024-12-01 11:00:00", 10.1f),
-        new Data(11, "2024-12-01 12:00:00", 11.2f),
-        new Data(12, "2024-12-01 13:00:00", 12.3f),
-        new Data(13, "2024-12-01 14:00:00", 13.4f),
-        new Data(14, "2024-12-01 15:00:00", 14.5f),
-        new Data(15, "2024-12-01 16:00:00", 15.6f),
-        new Data(16, "2024-12-01 17:00:00", 16.7f),
-        new Data(17, "2024-12-01 18:00:00", 17.8f),
-        new Data(18, "2024-12-01 19:00:00", 18.9f),
-        new Data(19, "2024-12-01 20:00:00", 19.1f),
-        new Data(20, "2024-12-01 21:00:00", 20.2f),
-    };
-
-    public TableFilter<string>[] idFilters = new TableFilter<string>[] {
-        new() { Text = "1", Value = "2" },
-        new() { Text = "2", Value = "2" },
-    };
-
-    public TableFilter<string>[] timeFilters = new TableFilter<string>[] {
-        new() { Text = "2024-12-01 04:00:00", Value = "2024-12-01 04:00:00" },
-        new() { Text = "2024-12-01 16:00:00", Value = "2024-12-01 16:00:00" },
-    };
-
-    void OnChange(QueryModel<Data> query)
-    {
-        Console.WriteLine(JsonSerializer.Serialize(query));
-
-        dataSource = query.ExecuteQuery(data.AsQueryable())
-            .Where(x => string.IsNullOrWhiteSpace(searchString) || x.Id.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase));
+        if (string.IsNullOrWhiteSpace(searchString))
+        {
+            pagedData = new List<TrafficData.TrafficRecord>(allData);
+        }
+        else
+        {
+            pagedData = allData
+                .Where(x =>
+                    x.Road.ToString().Contains(searchString)
+                    || x.Date.ToString("yyyy-MM-dd HH:mm:ss").Contains(searchString)
+                    || x.Flow.ToString().Contains(searchString))
+                .ToList();
+        }
+        _table?.ReloadData();
     }
 
-    void OnRowClick(RowData<Data> row)
+    private void OnChange(QueryModel<TrafficData.TrafficRecord> queryModel)
     {
-        Console.WriteLine($"row {row.Data.Id} was clicked");
+        // 处理排序
+        if (queryModel.SortModel != null && queryModel.SortModel.Any())
+        {
+            var sortModel = queryModel.SortModel.First();
+            if (sortModel.FieldName == nameof(TrafficData.TrafficRecord.Road))
+            {
+                pagedData = sortModel.Sort.Equals("ascend")
+                    ? pagedData.OrderBy(x => x.Road).ToList()
+                    : pagedData.OrderByDescending(x => x.Road).ToList();
+            }
+            else if (sortModel.FieldName == nameof(TrafficData.TrafficRecord.Date))
+            {
+                pagedData = sortModel.Sort.Equals("ascend")
+                    ? pagedData.OrderBy(x => x.Date).ToList()
+                    : pagedData.OrderByDescending(x => x.Date).ToList();
+            }
+            else if (sortModel.FieldName == nameof(TrafficData.TrafficRecord.Flow))
+            {
+                pagedData = sortModel.Sort.Equals("ascend")
+                    ? pagedData.OrderBy(x => x.Flow).ToList()
+                    : pagedData.OrderByDescending(x => x.Flow).ToList();
+            }
+        }
     }
 }

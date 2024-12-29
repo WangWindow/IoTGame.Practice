@@ -1,1 +1,1 @@
-dotnet run --project "./src/IoTGame.Practice.Client/IoTGame.Practice.Client.csproj"
+dotnet run --project "./src/IoTGame.Practice/IoTGame.Practice.csproj"

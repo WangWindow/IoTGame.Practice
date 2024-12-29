@@ -1,1 +1,1 @@
-dotnet watch --project "./src/IoTGame.Practice.Client/IoTGame.Practice.Client.csproj"
+dotnet watch --project "./src/IoTGame.Practice/IoTGame.Practice.csproj"
