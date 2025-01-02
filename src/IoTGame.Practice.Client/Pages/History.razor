@@ -4,19 +4,7 @@
 @using IoTGame.Practice.Client.Models;
 
 <PageContainer Title="History">
-
     <Table @ref="_table" DataSource="pagedData" TItem="TrafficData.TrafficRecord" OnChange="OnChange">
-        <TitleTemplate>
-            <GridRow>
-                <GridCol Span="4">
-                    <Title Level="3">Flow History</Title>
-                </GridCol>
-                <GridCol Span="8" Offset="12">
-                    <Search Placeholder="Search" @bind-Value="searchString" OnSearch="SearchData" />
-                </GridCol>
-            </GridRow>
-        </TitleTemplate>
-
         <ColumnDefinitions>
             <PropertyColumn TItem="TrafficData.TrafficRecord" TProp="int" Property="c => c.Road"
                             Title="Road"
@@ -33,19 +21,19 @@
 </PageContainer>
 
 @code {
-    private string searchString;
+    @* private string searchString; *@
     private string dataPath = "data/traffic.db";
     private List<TrafficData.TrafficRecord> allData = new();
     private List<TrafficData.TrafficRecord> pagedData = new();
-    private Table<TrafficData.TrafficRecord> _table;
+    private Table<TrafficData.TrafficRecord> _table = new();
     private TrafficData trafficData;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         try
         {
             trafficData = new TrafficData(dataPath);
-            allData = trafficData.GetTrafficData("history");
+            allData = await trafficData.GetTrafficDataAsync("history"); // { changed code }
             pagedData = new List<TrafficData.TrafficRecord>(allData);
             Console.WriteLine($"Loaded {allData.Count} records.");
         }
@@ -53,24 +41,6 @@
         {
             Console.WriteLine($"Error loading data: {ex.Message}");
         }
-    }
-
-    private void SearchData()
-    {
-        if (string.IsNullOrWhiteSpace(searchString))
-        {
-            pagedData = new List<TrafficData.TrafficRecord>(allData);
-        }
-        else
-        {
-            pagedData = allData
-                .Where(x =>
-                    x.Road.ToString().Contains(searchString)
-                    || x.Date.ToString("yyyy-MM-dd HH:mm:ss").Contains(searchString)
-                    || x.Flow.ToString().Contains(searchString))
-                .ToList();
-        }
-        _table?.ReloadData();
     }
 
     private void OnChange(QueryModel<TrafficData.TrafficRecord> queryModel)

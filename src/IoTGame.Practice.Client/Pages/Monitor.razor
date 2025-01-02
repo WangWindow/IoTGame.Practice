@@ -68,12 +68,12 @@
         SeriesField = "type"
     };
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         try
         {
             trafficData = new TrafficData(dataPath);
-            allData = trafficData.GetTrafficData("future");
+            allData = await trafficData.GetTrafficDataAsync("future");
             pagedData = new List<TrafficData.TrafficRecord>(allData);
             Console.WriteLine($"Loaded {allData.Count} records.");
         }
