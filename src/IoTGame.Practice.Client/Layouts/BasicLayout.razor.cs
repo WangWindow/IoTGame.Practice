@@ -26,9 +26,9 @@ namespace IoTGame.Practice.Layouts
                 },
                 new MenuDataItem
                 {
-                    Path = "/monitor",
-                    Name = "monitor",
-                    Key = "monitor",
+                    Path = "/chart",
+                    Name = "chart",
+                    Key = "chart",
                     Icon = "line-chart",
                 },
                 new MenuDataItem
@@ -37,6 +37,13 @@ namespace IoTGame.Practice.Layouts
                     Name = "history",
                     Key = "history",
                     Icon = "history",
+                },
+                new MenuDataItem
+                {
+                    Path = "/monitor",
+                    Name = "monitor",
+                    Key = "monitor",
+                    Icon = "monitor",
                 },
                 new MenuDataItem
                 {
